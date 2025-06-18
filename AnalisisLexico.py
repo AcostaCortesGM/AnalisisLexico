@@ -14,26 +14,26 @@ def pawk(args, i):
 
 
 def write_table(list_int, list_float, list_double, list_char, table_name):
+    """Write lexical components to table_name using pawk output."""
     with open(table_name, "w") as file:
         file.write("\tComponente Lexico\tLexema\tValor\n")
-    print("hola")
 
-    for i in list_int:
-        spaces = i.count(" ")
-        for x in range(spaces + 1):
-            awk_output = pawk(i, x)
-            print(awk_output)
+        for var_list in (list_int, list_float, list_double, list_char):
+            for item in var_list:
+                spaces = item.count(" ")
+                for x in range(spaces + 1):
+                    awk_output = pawk(item, x)
+                    file.write(f"{awk_output}\n")
 
 
 def recognize_variables(file):    # Expresiones regulares para cada variable
 
-    expression_int = re.compile(r"int \w+ = [0-9]+|, [a-zA-Z]+ = [0-9]+")
-    expression_float = re.compile("float \w+ = [0-9]+.[0-9]+|, [a-zA-Z]+ = [0-9]+.[0-9]+")
-    expression_double = re.compile("double \w+ = [0-9]+.[0-9]+|, [a-zA-Z] = [0-9]+.[0-9]+")
-    expression_char = re.compile("char \*\w+\[[0-9]+] = [\"|\'][a-zA-Z]+[\"|\']"
-                                 "|, [a-zA-Z]+\[[0-9]+] = [\"|\'][a-zA-Z]+[\"\']|char "
-                                 "\w+\[[0-9]+] = [\"|\'][a-zA-Z]+[\"|\']"
-                                 "")
+    expression_int = re.compile(r"int\s+\w+\s*=\s*\d+|,\s*\w+\s*=\s*\d+")
+    expression_float = re.compile(r"float\s+\w+\s*=\s*\d+\.\d+|,\s*\w+\s*=\s*\d+\.\d+")
+    expression_double = re.compile(r"double\s+\w+\s*=\s*\d+\.\d+|,\s*\w+\s*=\s*\d+\.\d+")
+    expression_char = re.compile(
+        r"char\s*\*?\s*\w+\s*\[\d+]\s*=\s*['\"][A-Za-z]+['\"]|,\s*\w+\s*\[\d+]\s*=\s*['\"][A-Za-z]+['\"]"
+    )
 
     return expression_int.findall(file), expression_float.findall(file), \
            expression_double.findall(file), expression_char.findall(file)
